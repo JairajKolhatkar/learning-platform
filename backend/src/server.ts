@@ -21,7 +21,7 @@ const server = http.createServer(app);
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: ['http://localhost:3000'],
     methods: ['GET', 'POST'],
     credentials: true
   }
@@ -30,7 +30,7 @@ const io = new Server(server, {
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: ['http://localhost:3000'],
   credentials: true
 }));
 
@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
 });
 
 // Connect to MongoDB and start server
-const PORT = process.env.PORT || 8080;
+const PORT = 5000; // Force set port to 5000
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tutorial-app';
 
 mongoose
