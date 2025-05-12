@@ -9,6 +9,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import CoursesPage from './pages/CoursesPage';
 import CourseDetailPage from './pages/CourseDetailPage';
+import ApiDebugger from './components/ApiDebugger';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Environment variables setup
 if (!window.env) {
@@ -47,6 +49,41 @@ function App() {
     };
   }, []);
 
+  // Add direct API test on component mount
+  useEffect(() => {
+    // Test API connectivity with vanilla fetch
+    const testApiConnection = async () => {
+      try {
+        console.log('Testing direct API connection...');
+        
+        // Test with fetch API
+        const response = await fetch('http://localhost:4000/api/debug');
+        const data = await response.json();
+        
+        console.log('Direct API test succeeded:', data);
+      } catch (error) {
+        console.error('Direct API test failed:', error);
+      }
+      
+      // Also test with XMLHttpRequest for compatibility
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'http://localhost:4000/api/debug', true);
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log('XHR test succeeded:', JSON.parse(xhr.responseText));
+        } else {
+          console.error('XHR test failed:', xhr.statusText);
+        }
+      };
+      xhr.onerror = () => {
+        console.error('XHR network error');
+      };
+      xhr.send();
+    };
+    
+    testApiConnection();
+  }, []);
+
   const renderPage = () => {
     if (currentPage === '/') {
       return <HomePage />;
@@ -66,17 +103,26 @@ function App() {
   };
 
   return (
-    <AuthProvider>
-      <CourseProvider>
-        <EnrollmentProvider>
-          <ForumProvider>
-            <TestimonialProvider>
-              {renderPage()}
-            </TestimonialProvider>
-          </ForumProvider>
-        </EnrollmentProvider>
-      </CourseProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <CourseProvider>
+          <EnrollmentProvider>
+            <ForumProvider>
+              <TestimonialProvider>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/courses" element={<CoursesPage />} />
+                  <Route path="/courses/:id" element={<CourseDetailPage />} />
+                </Routes>
+                <ApiDebugger />
+              </TestimonialProvider>
+            </ForumProvider>
+          </EnrollmentProvider>
+        </CourseProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

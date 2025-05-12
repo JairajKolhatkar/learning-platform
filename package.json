@@ -19,32 +19,33 @@
     "install:frontend": "npm install --workspace=frontend"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^8.0.0",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2",
-    "axios": "^1.6.2",
+    "mongoose": "^8.0.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "typescript": "^5.5.3",
-    "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
-    "@types/node": "^20.8.10",
-    "@types/express": "^4.17.20",
-    "@types/cors": "^2.8.15",
-    "@types/jsonwebtoken": "^9.0.4",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
+    "@types/jsonwebtoken": "^9.0.4",
+    "@types/node": "^20.8.10",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
     "eslint": "^9.9.1",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.5.3",
     "vite": "^5.4.2"
   }
-} 
+}

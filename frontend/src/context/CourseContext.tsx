@@ -42,13 +42,20 @@ export const CourseProvider: React.FC<CourseProviderProps> = ({ children }) => {
     
     try {
       const queryParams = params || searchParams;
+      console.log('Fetching courses with filters:', queryParams);
       const response = await courseService.getAllCourses(queryParams);
+      console.log('Full API Response:', response);
+      
+      if (!response || !response.courses) {
+        console.error('Invalid response format:', response);
+        throw new Error('Invalid API response format');
+      }
       
       setCourses(response.courses);
       setTotalCourses(response.total);
-    } catch (err: any) {
-      console.error('Error fetching courses:', err);
-      setError(err.message || 'Failed to fetch courses. Please try again later.');
+    } catch (error: any) {
+      console.error('Error fetching courses:', error);
+      setError(error.response?.data?.message || error.message || 'Failed to fetch courses. Please check your connection.');
       setCourses([]);
     } finally {
       setLoading(false);

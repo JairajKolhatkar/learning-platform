@@ -66,9 +66,16 @@ export interface CourseSearchParams {
 }
 
 const courseService = {
-  getAllCourses: async (params?: CourseSearchParams): Promise<{ courses: Course[]; total: number }> => {
-    const response = await api.get<{ courses: Course[]; total: number }>('/courses', { params });
-    return response.data;
+  getAllCourses: async (params?: CourseSearchParams): Promise<{ courses: Course[]; total: number; page: number; pages: number }> => {
+    try {
+      console.log('Calling API at:', `/courses with params:`, params);
+      const response = await api.get<{ courses: Course[]; total: number; page: number; pages: number }>('/courses', { params });
+      console.log('API response data structure:', Object.keys(response.data));
+      return response.data;
+    } catch (error) {
+      console.error('API error:', error);
+      throw error;
+    }
   },
 
   getCourseById: async (id: string): Promise<Course> => {

@@ -67,6 +67,8 @@ export const getCourses = async (req: Request, res: Response) => {
       ];
     }
     
+    console.log('Fetching courses with filter:', filter);
+    
     // Execute query with pagination
     const count = await Course.countDocuments(filter);
     const courses = await Course.find(filter)
@@ -75,6 +77,8 @@ export const getCourses = async (req: Request, res: Response) => {
       .skip(pageSize * (page - 1))
       .limit(pageSize);
     
+    console.log(`Found ${courses.length} courses`);
+    
     res.json({
       courses,
       page,
@@ -82,7 +86,11 @@ export const getCourses = async (req: Request, res: Response) => {
       total: count
     });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    console.error('Error in getCourses:', error);
+    res.status(500).json({ 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'production' ? null : error.stack 
+    });
   }
 };
 
