@@ -98,10 +98,6 @@ A full-stack online learning platform built with React, Node.js, Express, and Mo
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
-
-This project is licensed under the MIT License.
-
 ## Acknowledgments
 
 - Thanks to all contributors who have helped with this project
