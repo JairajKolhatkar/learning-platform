@@ -9,6 +9,7 @@ import courseRoutes from './routes/courseRoutes';
 import userRoutes from './routes/userRoutes';
 import enrollmentRoutes from './routes/enrollmentRoutes';
 import forumRoutes from './routes/forumRoutes';
+import testRoutes from './routes/testRoutes';
 import { errorHandler } from './middleware/errorMiddleware';
 
 // Load environment variables
@@ -18,58 +19,37 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// Socket.io setup with permissive CORS
+// Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    origin: '*', // Allow all origins in development
+    methods: ['GET', 'POST'],
     credentials: true
   }
 });
 
-// Apply CORS middleware - very permissive for development
-app.use(cors({
-  origin: '*', // Allow all origins
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  credentials: true
-}));
-
 // Middleware
 app.use(express.json());
+app.use(cors({
+  origin: '*', // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Simple test routes
-app.get('/', (req, res) => {
-  res.send('API is running... <a href="/api/courses">View Courses</a>');
-});
+// Serve static files from the public directory
+app.use(express.static('public'));
 
-// Hello world test endpoint
-app.get('/hello', (req, res) => {
-  res.json({ message: 'Hello World!' });
-});
+// Add OPTIONS handling for preflight requests
+app.options('*', cors());
 
-// API debug endpoint
-app.get('/api/debug', (req, res) => {
-  res.json({
-    status: 'ok',
-    time: new Date().toISOString(),
-    mongodb: {
-      connected: mongoose.connection.readyState === 1,
-      host: mongoose.connection.host || 'Not connected',
-      database: mongoose.connection.name || 'Not connected'
-    },
-    environment: {
-      nodeEnv: process.env.NODE_ENV || 'development',
-      port: PORT
-    }
-  });
-});
-
-// API Routes
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/forum', forumRoutes);
+app.use('/api/test', testRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
@@ -99,30 +79,32 @@ io.on('connection', (socket) => {
 });
 
 // Connect to MongoDB and start server
-const PORT = 4000; // Force set port to 4000
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/tutorial-app';
+const PORT = process.env.PORT || 4001;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/learning-platform';
 
-// Try to connect to MongoDB and start server
+console.log('Attempting to connect to MongoDB Atlas...');
+
+// Set mongoose connection options
+mongoose.set('strictQuery', false);
+
+// Connect to MongoDB with improved error handling
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log(`MongoDB Connected: ${mongoose.connection.host}`);
-    console.log(`MongoDB Database: ${mongoose.connection.name}`);
+    console.log('Connected to MongoDB successfully!');
     
+    // Start the server after successful MongoDB connection
     server.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
-      console.log(`API available at http://localhost:${PORT}/api`);
-      console.log(`Debug endpoint: http://localhost:${PORT}/api/debug`);
-      console.log(`Hello world: http://localhost:${PORT}/hello`);
     });
   })
   .catch((error) => {
     console.error('Failed to connect to MongoDB:', error);
+    console.log('Starting server without MongoDB connection for development purposes...');
     
-    // Start server even if MongoDB connection fails
-    console.log('Starting server without MongoDB connection...');
+    // Start the server anyway for development purposes
     server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT} (no MongoDB)`);
+      console.log(`Server running on port ${PORT} (MongoDB connection failed, running in limited mode)`);
     });
   });
 

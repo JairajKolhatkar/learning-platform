@@ -2,9 +2,9 @@ import axios from 'axios';
 
 // Try different API URLs in case of connectivity issues
 const tryAPIUrls = [
-  'http://localhost:4000/api',
+  'http://localhost:4001/api',
   'http://localhost:8888/api', // Proxy server
-  'http://127.0.0.1:4000/api',  // Try localhost IP alias
+  'http://127.0.0.1:4001/api',  // Try localhost IP alias
 ];
 
 // Log the API URLs we're going to try
@@ -18,7 +18,7 @@ const testApiConnectivity = async () => {
   for (const url of tryAPIUrls) {
     try {
       console.log(`Testing API URL: ${url}`);
-      const response = await fetch(`${url}/debug`);
+      const response = await fetch(`${url}/test/ping`);
       
       if (response.ok) {
         console.log(`🎉 Success with API URL: ${url}`);
